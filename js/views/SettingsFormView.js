@@ -9,7 +9,8 @@ var
 	
 	Settings = require('modules/%ModuleName%/js/Settings.js'),
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
-	App = require('%PathToCoreWebclientModule%/js/App.js')
+	App = require('%PathToCoreWebclientModule%/js/App.js'),
+	UserSettings = require('%PathToCoreWebclientModule%/js/Settings.js')
 ;
 
 /**
@@ -25,6 +26,7 @@ function SettingsFormView()
 	this.server = ko.observable(Settings.Server);
 	this.linkToManual = ko.observable(Settings.LinkToManual);
 	this.infoCredentials = TextUtils.i18n('%MODULENAME%/INFO_CREDENTIALS', {'EMAIL': App.getUserPublicId()});
+	this.bDemo = true;//UserSettings.IsDemo;
 }
 
 _.extendOwn(SettingsFormView.prototype, CAbstractSettingsFormView.prototype);
