@@ -14,16 +14,30 @@ namespace Aurora\Modules\ActiveServer;
  */
 class Module extends \Aurora\System\Module\AbstractWebclientModule
 {
+	protected $aRequireModules = array(
+		'Licensing'
+	);
+	
+	
 	public function init() 
 	{
 		$this->extendObject(
 			'Aurora\Modules\Core\Classes\User', 
 			array(
-				'Enabled'	=> array('bool', false, true)
+				'Enabled'	=> array('bool', $this->getConfig('EnableForNewUsers'), true)
 			)
 		);
 		$this->subscribeEvent('Core::Login::after', array($this, 'onAfterLogin'), 10);
+		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
 	}	
+	
+	protected function getFreeUsersSlots()
+	{
+		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
+		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
+		$iUsersCount = $this->GetUsersCount();
+		return $iLicensedUsersCount - $iUsersCount;
+	}
 	
 	public function onAfterLogin(&$aArgs, &$mResult)
 	{
@@ -39,6 +53,45 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		}
 	}	
 	
+	public function onAfterCreateUser(&$aArgs, &$mResult)
+	{
+		$iUserId = isset($mResult) && (int) $mResult > 0 ? $mResult : 0;
+		if ($iUserId > 0 && $this->getFreeUsersSlots() < 0)
+		{
+			$oCoreModuleDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
+			$oUser = $oCoreModuleDecorator->GetUser($iUserId);
+
+			if ($oUser)
+			{
+				$oUser->{$this->GetName() . '::Enabled'} = false;
+				$oCoreModuleDecorator->UpdateUserObject($oUser);
+			}
+		}
+	}	
+
+	public function GetEnableModuleForCurrentUser()
+	{
+		$bResult = false;
+		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::NormalUser);
+		
+		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
+		if ($iUserId)
+		{
+			$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
+			if ($oCoreDecorator)
+			{
+				$oUser = $oCoreDecorator->GetUser($iUserId);
+			}
+			if ($oUser)
+			{
+				$bResult = $oUser->{$this->GetName() . '::Enabled'};
+			}
+		}
+		
+		return $bResult;
+	}
+
+
 	public function GetPerUserSettings($UserId)
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::SuperAdmin);
@@ -66,6 +119,15 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 
 		$oCoreModuleDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
 		$oUser = $oCoreModuleDecorator->GetUser($UserId);
+		
+		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
+		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
+		$iUsersCount = $this->GetUsersCount();
+		if ($iUsersCount >= $iLicensedUsersCount && $EnableModule && !$oUser->{$this->GetName() . '::Enabled'})
+		{
+			throw new Exceptions\UserLimitExceeded(1, null, 'ActiveSync user limit exceeded.');
+		}
+		
 		if ($oUser)
 		{
 			$oUser->{$this->GetName() . '::Enabled'} = $EnableModule;
@@ -88,24 +150,47 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 
 	public function GetSettings()
 	{
-		\Aurora\System\Api::checkUserRoleIsAtLeast( \Aurora\System\Enums\UserRole::SuperAdmin);
+		\Aurora\System\Api::checkUserRoleIsAtLeast( \Aurora\System\Enums\UserRole::NormalUser);
 		
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 		
+		$bEnableModuleForUser = false;
+		
+		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
+		if ($iUserId)
+		{
+			$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
+			if ($oCoreDecorator)
+			{
+				$oUser = $oCoreDecorator->GetUser($iUserId);
+			}
+			if ($oUser)
+			{
+				$bEnableModuleForUser = $oUser->{$this->GetName() . '::Enabled'};
+			}
+		}
+		
 		return array(
 			'EnableModule' => !$this->getConfig('Disabled', false),
+			'EnableModuleForUser' => $bEnableModuleForUser,
+			'EnableForNewUsers' => $this->getConfig('EnableForNewUsers', false),
 			'UsersCount' => $this->GetUsersCount(),
-			'LicensedUsersCount' => $oLicensing->GetUsersCount('ActiveServer')
+			'LicensedUsersCount' => $oLicensing->GetUsersCount('ActiveServer'),
+			'Server' => $this->getConfig('Server', ''),
+			'LinkToManual' => $this->getConfig('LinkToManual', '')
 		);
 	}
 	
-	public function UpdateSettings($EnableModule)
+	public function UpdateSettings($EnableModule, $EnableForNewUsers, $Server, $LinkToManual)
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::TenantAdmin);
 		
 		try
 		{
 			$this->setConfig('Disabled', !$EnableModule);
+			$this->setConfig('EnableForNewUsers', $EnableForNewUsers);
+			$this->setConfig('Server', $Server);
+			$this->setConfig('LinkToManual', $LinkToManual);
 			$this->saveModuleConfig();
 		}
 		catch (\Exception $ex)

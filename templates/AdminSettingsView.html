@@ -14,6 +14,21 @@
 						<label for="enableModule" data-bind="i18n: {'key': '%MODULENAME%/ENABLE_MODULE'}"></label>
 					</span>
 				</div>
+				<div class="hint row">
+					<span class="value" data-bind="i18n: {'key': '%MODULENAME%/HINT_ENABLE_ACTIVESERVER'}"></span>
+				</div>		
+				<div class="row">
+					<span class="value" style="float: left;">
+						<label class="custom_checkbox" data-bind="css: {'checked': enableForNewUsers}">
+							<span class="icon"></span>
+							<input type="checkbox" id="enableForNewUsers" data-bind="checked: enableForNewUsers" />
+						</label>
+						<label for="enableForNewUsers" data-bind="i18n: {'key': '%MODULENAME%/ENABLE_FOR_NEW_USERS'}"></label>
+					</span>
+				</div>
+				<div class="hint row">
+					<span class="value" data-bind="i18n: {'key': '%MODULENAME%/HINT_FOR_NEW_USERS'}"></span>
+				</div>				
 				<div class="row">
 					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_LICENSING_MAX_NUMBER_OF_USERS'}"></span>
 					<span class="value">
@@ -38,7 +53,24 @@
 						<b data-bind="text: licenseType"></b>
 					</span>
 				</div>
-				
+				<div class="row">
+					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_SERVER_HOST'}"></span>
+					<span class="value">
+						<input class="input" type="text" data-bind="value: server, valueUpdate: 'afterkeydown', onEnter: save">
+					</span>
+				</div>
+				<div class="hint row">
+					<span class="value" data-bind="i18n: {'key': '%MODULENAME%/HINT_SERVER_HOST'}"></span>
+				</div>				
+				<div class="row">
+					<span class="label" data-bind="i18n: {'key': '%MODULENAME%/LABEL_LINK_TO_MANUAL'}"></span>
+					<span class="value">
+						<input class="input" type="text" data-bind="value: linkToManual, valueUpdate: 'afterkeydown', onEnter: save">
+					</span>
+				</div>
+				<div class="hint row">
+					<span class="value" data-bind="i18n: {'key': '%MODULENAME%/HINT_LINK_TO_MANUAL'}"></span>
+				</div>				
 			</div>
 			<div class="buttons">
 				<span class="button" data-bind="click: save, visible: !isSaving()">

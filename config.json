@@ -1,6 +1,18 @@
-{
-    "Disabled": [
-		false,
-		"bool"
+ {
+	"Disabled": [
+        false,
+        "bool"
+    ],
+    "EnableForNewUsers": [
+        true,
+        "bool"
+    ],
+    "Server": [
+        "sync.afterlogic.com",
+        "string"
+    ],
+	"LinkToManual": [
+		"",
+		"string"
 	]
 }

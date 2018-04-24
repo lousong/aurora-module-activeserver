@@ -22,10 +22,13 @@ function CActiveServerAdminSettingsView()
 	CAbstractSettingsFormView.call(this, Settings.ServerModuleName);
 
 	this.enable = ko.observable(Settings.EnableModule);
+	this.enableForNewUsers = ko.observable(Settings.EnableForNewUsers);
 	this.usersNumber = ko.observable(Settings.UsersCount);
 	this.usersNumberLicensed = ko.observable(Settings.LicensedUsersCount);
 	this.usersFreeSlots = ko.observable(Types.pInt(this.usersNumberLicensed()) - Types.pInt(this.usersNumber()));
 	this.licenseType = ko.observable('');
+	this.server = ko.observable(Settings.Server);
+	this.linkToManual = ko.observable(Settings.LinkToManual);
 }
 
 _.extendOwn(CActiveServerAdminSettingsView.prototype, CAbstractSettingsFormView.prototype);
@@ -49,7 +52,10 @@ CActiveServerAdminSettingsView.prototype.revertGlobalValues = function()
 CActiveServerAdminSettingsView.prototype.getParametersForSave = function ()
 {
 	return {
-		'EnableModule': this.enable()
+		'EnableModule': this.enable(),
+		'EnableForNewUsers': this.enableForNewUsers(),
+		'Server': this.server(),
+		'LinkToManual': this.linkToManual()
 	};
 };
 
@@ -60,7 +66,7 @@ CActiveServerAdminSettingsView.prototype.getParametersForSave = function ()
  */
 CActiveServerAdminSettingsView.prototype.applySavedValues = function (oParameters)
 {
-	Settings.updateAdmin(oParameters.EnableModule);
+	Settings.updateAdmin(oParameters.EnableModule, oParameters.EnableForNewUsers, oParameters.Server);
 };
 
 /**
