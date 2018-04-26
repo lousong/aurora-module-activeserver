@@ -29,6 +29,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		);
 		$this->subscribeEvent('Core::Login::after', array($this, 'onAfterLogin'), 10);
 		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
+		$this->subscribeEvent('Autodiscover::GetAutodiscover::after', array($this, 'onAfterGetAutodiscover'));
 	}	
 	
 	protected function getFreeUsersSlots()
@@ -68,6 +69,30 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			}
 		}
 	}	
+	
+	public function onAfterGetAutodiscover(&$aArgs, &$mResult)
+	{
+		$sEmail = $aArgs['Email'];
+		
+		$sResult = \implode("\n", array(
+'		<Culture>en:us</Culture>',
+'        <User>',
+'            <DisplayName>'.$sEmail.'</DisplayName>',
+'            <EMailAddress>'.$sEmail.'</EMailAddress>',
+'        </User>',
+'        <Action>',
+'            <Settings>',
+'                <Server>',
+'                    <Type>MobileSync</Type>',
+'                    <Url>https://'.$this->getConfig('Server', '').'/Microsoft-Server-ActiveSync</Url>',
+'                    <Name>https://'.$this->getConfig('Server', '').'/Microsoft-Server-ActiveSync</Name>',
+'                </Server>',
+'            </Settings>',
+'        </Action>'
+		));
+		
+		$mResult = $mResult . $sResult;
+	}
 
 	public function GetEnableModuleForCurrentUser()
 	{
