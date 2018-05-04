@@ -16,7 +16,7 @@
 				<div class="hint" data-bind="i18n: {'key': 'COREWEBCLIENT/INFO_DEMO_MOBILE_CREDENTIALS_HTML', 'type': 'html'}, visible: bDemo"></div>
 			</div>
 			<div class="row">
-				<div class="hint" data-bind="i18n: {'key': '%MODULENAME%/INFO_DEMO', 'type': 'html'}, visible: bDemo"></div>
+				<div class="hint" data-bind="html: infoDemo, visible: bDemo"></div>
 			</div>
 			<div class="row" data-bind="visible: linkToManual().length > 0">
 				<span class="value">

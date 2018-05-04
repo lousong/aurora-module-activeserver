@@ -16,6 +16,7 @@ module.exports = {
 	LicensedUsersCount: 0,
 	Server: '',
 	LinkToManual: '',
+	ProductName: '',
 	
 	/**
 	 * Initializes settings from AppData object sections.
@@ -24,7 +25,10 @@ module.exports = {
 	 */
 	init: function (oAppData)
 	{
-		var oAppDataSection = oAppData['%ModuleName%'];
+		var 
+			oAppDataSection = oAppData['%ModuleName%'],
+			oAppDataCoreSection = oAppData['Core']
+		;
 		
 		if (!_.isEmpty(oAppDataSection))
 		{
@@ -35,6 +39,7 @@ module.exports = {
 			this.LicensedUsersCount = Types.pInt(oAppDataSection.LicensedUsersCount, this.LicensedUsersCount);
 			this.Server = oAppDataSection.Server;
 			this.LinkToManual = oAppDataSection.LinkToManual;
+			this.ProductName = oAppDataCoreSection.ProductName;
 		}		
 	},
 	
