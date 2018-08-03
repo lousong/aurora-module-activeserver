@@ -25,7 +25,7 @@ function CActiveServerAdminSettingsView()
 	this.enableForNewUsers = ko.observable(Settings.EnableForNewUsers);
 	this.usersNumber = ko.observable(Settings.UsersCount);
 	this.usersNumberLicensed = ko.observable(Settings.LicensedUsersCount);
-	this.usersFreeSlots = ko.observable(Types.pInt(this.usersNumberLicensed()) - Types.pInt(this.usersNumber()));
+	this.usersFreeSlots = ko.observable(Settings.UsersFreeSlots);
 	this.licenseType = ko.observable('');
 	this.server = ko.observable(Settings.Server);
 	this.linkToManual = ko.observable(Settings.LinkToManual);

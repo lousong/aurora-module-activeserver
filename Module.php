@@ -34,10 +34,19 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	
 	protected function getFreeUsersSlots()
 	{
+		$mResult = 0;
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
-		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
-		$iUsersCount = $this->GetUsersCount();
-		return $iLicensedUsersCount - $iUsersCount;
+		if ($oLicensing->IsTrial('ActiveServer'))
+		{
+			$mResult = 1;
+		}
+		else
+		{
+			$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
+			$iUsersCount = $this->GetUsersCount();
+			$mResult = $iLicensedUsersCount - $iUsersCount;
+		}
+		return $mResult;
 	}
 	
 	public function onAfterLogin(&$aArgs, &$mResult)
@@ -148,7 +157,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
 		$iUsersCount = $this->GetUsersCount();
-		if ($iUsersCount >= $iLicensedUsersCount && $EnableModule && !$oUser->{$this->GetName() . '::Enabled'})
+		if (!$oLicensing->IsTrial('ActiveServer') && !$oLicensing->IsUnlim('ActiveServer') && $iUsersCount >= $iLicensedUsersCount && $EnableModule && !$oUser->{$this->GetName() . '::Enabled'})
 		{
 			throw new Exceptions\UserLimitExceeded(1, null, 'ActiveSync user limit exceeded.');
 		}
@@ -195,12 +204,17 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			}
 		}
 		
+		$iFreeSlots = (int) $oLicensing->GetUsersCount('ActiveServer') - (int) $this->GetUsersCount();
+		$mLicensedUsersCount = $oLicensing->IsTrial('ActiveServer') ||  $oLicensing->IsUnlim('ActiveServer') ? 'Unlim' : $oLicensing->GetUsersCount('ActiveServer');
+		$mUsersFreeSlots = $oLicensing->IsTrial('ActiveServer') ||  $oLicensing->IsUnlim('ActiveServer') ? 'Unlim' : $iFreeSlots;
+				
 		return array(
 			'EnableModule' => !$this->getConfig('Disabled', false),
 			'EnableModuleForUser' => $bEnableModuleForUser,
 			'EnableForNewUsers' => $this->getConfig('EnableForNewUsers', false),
 			'UsersCount' => $this->GetUsersCount(),
-			'LicensedUsersCount' => $oLicensing->GetUsersCount('ActiveServer'),
+			'LicensedUsersCount' => $mLicensedUsersCount,
+			'UsersFreeSlots' => $mUsersFreeSlots,
 			'Server' => $this->getConfig('Server', ''),
 			'LinkToManual' => $this->getConfig('LinkToManual', '')
 		);

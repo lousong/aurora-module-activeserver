@@ -14,6 +14,7 @@ module.exports = {
 	EnableForNewUsers: false,
 	UsersCount: 0,
 	LicensedUsersCount: 0,
+	UsersFreeSlots: 0,
 	Server: '',
 	LinkToManual: '',
 	ProductName: '',
@@ -36,7 +37,8 @@ module.exports = {
 			this.EnableModuleForUser = Types.pBool(oAppDataSection.EnableModuleForUser, this.EnableModuleForUser);
 			this.EnableForNewUsers = Types.pBool(oAppDataSection.EnableForNewUsers, this.EnableForNewUsers);
 			this.UsersCount = Types.pInt(oAppDataSection.UsersCount, this.UsersCount);
-			this.LicensedUsersCount = Types.pInt(oAppDataSection.LicensedUsersCount, this.LicensedUsersCount);
+			this.LicensedUsersCount = oAppDataSection.LicensedUsersCount;
+			this.UsersFreeSlots = oAppDataSection.UsersFreeSlots;
 			this.Server = oAppDataSection.Server;
 			this.LinkToManual = oAppDataSection.LinkToManual;
 			this.ProductName = oAppDataCoreSection.ProductName;
