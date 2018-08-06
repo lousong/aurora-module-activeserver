@@ -2,10 +2,10 @@
 
 var
 	_ = require('underscore'),
-	$ = require('jquery'),
 	ko = require('knockout'),
 	
 	TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
+	Types = require('%PathToCoreWebclientModule%/js/utils/Types.js'),
 	
 	Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
 	Api = require('%PathToCoreWebclientModule%/js/Api.js'),
@@ -50,12 +50,15 @@ CActiveServerPerUserAdminSettingsView.prototype.onRoute = function ()
  */
 CActiveServerPerUserAdminSettingsView.prototype.requestPerUserSettings = function ()
 {
-	Ajax.send(Settings.ServerModuleName, 'GetPerUserSettings', {'UserId': this.iUserId}, function (oResponse) {
-		if (oResponse.Result)
-		{
-			this.enableModule(oResponse.Result.EnableModule);
-		}
-	}, this);
+	if (Types.isPositiveNumber(this.iUserId))
+	{
+		Ajax.send(Settings.ServerModuleName, 'GetPerUserSettings', {'UserId': this.iUserId}, function (oResponse) {
+			if (oResponse.Result)
+			{
+				this.enableModule(oResponse.Result.EnableModule);
+			}
+		}, this);
+	}
 };
 
 /**
