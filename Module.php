@@ -24,12 +24,13 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		$this->extendObject(
 			'Aurora\Modules\Core\Classes\User', 
 			array(
-				'Enabled'	=> array('bool', $this->getConfig('EnableForNewUsers'), true)
+				'Enabled'	=> array('bool', false, true)
 			)
 		);
 		$this->subscribeEvent('Core::Login::after', array($this, 'onAfterLogin'), 10);
 		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
 		$this->subscribeEvent('Autodiscover::GetAutodiscover::after', array($this, 'onAfterGetAutodiscover'));
+		$this->subscribeEvent('Licensing::UpdateSettings::after', array($this, 'onAfterUpdateLicensingSettings'));
 	}	
 	
 	protected function getFreeUsersSlots()
@@ -56,7 +57,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		{
 			$oUser = \Aurora\System\Api::getAuthenticatedUser();
 			$oLicensing = \Aurora\System\Api::GetModule('Licensing');
-			if (!($oUser && $oUser->{$this->GetName() . '::Enabled'} && $oLicensing->ValidatePeriod('ActiveServer')))
+			if (!($oUser && $oUser->{$this->GetName() . '::Enabled'} && $oLicensing->ValidatePeriod('ActiveServer')) || $this->getFreeUsersSlots() < 0)
 			{
 				$mResult = false;
 			}
@@ -65,16 +66,27 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	
 	public function onAfterCreateUser(&$aArgs, &$mResult)
 	{
-		$iUserId = isset($mResult) && (int) $mResult > 0 ? $mResult : 0;
-		if ($iUserId > 0 && $this->getFreeUsersSlots() < 0)
+		$iUserId = isset($mResult) && (int) $mResult > 0 ? (int) $mResult : 0;
+		if ($iUserId > 0)
 		{
 			$oCoreModuleDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
 			$oUser = $oCoreModuleDecorator->GetUser($iUserId);
 
 			if ($oUser)
 			{
-				$oUser->{$this->GetName() . '::Enabled'} = false;
-				$oCoreModuleDecorator->UpdateUserObject($oUser);
+				if ($this->getFreeUsersSlots() < 1)
+				{
+					if ($oUser->{$this->GetName() . '::Enabled'})
+					{
+						$oUser->{$this->GetName() . '::Enabled'} = false;
+						$oCoreModuleDecorator->UpdateUserObject($oUser);
+					}
+				}
+				elseif ($oUser->{$this->GetName() . '::Enabled'} !== $this->getConfig('EnableForNewUsers'))
+				{
+					$oUser->{$this->GetName() . '::Enabled'} = $this->getConfig('EnableForNewUsers');
+					$oCoreModuleDecorator->UpdateUserObject($oUser);
+				}
 			}
 		}
 	}	
@@ -101,6 +113,18 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		));
 		
 		$mResult = $mResult . $sResult;
+	}
+
+	public function onAfterUpdateLicensingSettings(&$aArgs, &$mResult, &$mSubscriptionsResult)
+	{
+		if ($this->getFreeUsersSlots() < 0)
+		{
+			$mSubscriptionsResult = [
+				'Result' => false,
+				'ErrorCode' => 1,
+				'ErrorMessage' => 'User limit exceeded, ActiveServer is disabled.'
+			];
+		}
 	}
 
 	public function GetEnableModuleForCurrentUser()
@@ -187,7 +211,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		\Aurora\System\Api::checkUserRoleIsAtLeast( \Aurora\System\Enums\UserRole::NormalUser);
 		
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
-		
+
 		$bEnableModuleForUser = false;
 		
 		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
@@ -204,7 +228,11 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			}
 		}
 		
-		$iFreeSlots = (int) $oLicensing->GetUsersCount('ActiveServer') - (int) $this->GetUsersCount();
+		$iFreeSlots = $this->getFreeUsersSlots();
+		if ($iFreeSlots < 0)
+		{
+			$iFreeSlots = 'User limit exceeded, ActiveSync is disabled';
+		}
 		$mLicensedUsersCount = $oLicensing->IsTrial('ActiveServer') ||  $oLicensing->IsUnlim('ActiveServer') ? 'Unlim' : $oLicensing->GetUsersCount('ActiveServer');
 		$mUsersFreeSlots = $oLicensing->IsTrial('ActiveServer') ||  $oLicensing->IsUnlim('ActiveServer') ? 'Unlim' : $iFreeSlots;
 				
@@ -224,20 +252,22 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::TenantAdmin);
 		
+		$bResult = false;
+		
 		try
 		{
 			$this->setConfig('Disabled', !$EnableModule);
 			$this->setConfig('EnableForNewUsers', $EnableForNewUsers);
 			$this->setConfig('Server', $Server);
 			$this->setConfig('LinkToManual', $LinkToManual);
-			$this->saveModuleConfig();
+			$bResult = $this->saveModuleConfig();
 		}
 		catch (\Exception $ex)
 		{
 			throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::CanNotSaveSettings);
 		}
 		
-		return true;
+		return $bResult;
 	}	
 	
 	public function GetLicenseInfo()

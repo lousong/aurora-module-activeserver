@@ -105,7 +105,7 @@ CActiveServerPerUserAdminSettingsView.prototype.setAccessLevel = function (sEnti
 	if (this.iUserId !== iEntityId)
 	{
 		this.iUserId = iEntityId;
-		this.requestPerUserSettings();
+//		this.requestPerUserSettings();
 	}
 };
 
