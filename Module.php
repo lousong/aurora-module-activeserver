@@ -235,13 +235,13 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		}
 		$mLicensedUsersCount = $oLicensing->IsTrial('ActiveServer') ||  $oLicensing->IsUnlim('ActiveServer') ? 'Unlim' : $oLicensing->GetUsersCount('ActiveServer');
 		$mUsersFreeSlots = $oLicensing->IsTrial('ActiveServer') ||  $oLicensing->IsUnlim('ActiveServer') ? 'Unlim' : $iFreeSlots;
-				
+
 		return array(
 			'EnableModule' => !$this->getConfig('Disabled', false),
 			'EnableModuleForUser' => $bEnableModuleForUser,
 			'EnableForNewUsers' => $this->getConfig('EnableForNewUsers', false),
 			'UsersCount' => $this->GetUsersCount(),
-			'LicensedUsersCount' => $mLicensedUsersCount,
+			'LicensedUsersCount' => (int) $mLicensedUsersCount,
 			'UsersFreeSlots' => $mUsersFreeSlots,
 			'Server' => $this->getConfig('Server', ''),
 			'LinkToManual' => $this->getConfig('LinkToManual', '')
