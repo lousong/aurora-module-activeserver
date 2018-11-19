@@ -12,7 +12,7 @@ namespace Aurora\Modules\ActiveServer;
  *
  * @package Modules
  */
-class Module extends \Aurora\System\Module\AbstractWebclientModule
+class Module extends \Aurora\System\Module\AbstractModule
 {
 	protected $aRequireModules = array(
 		'Licensing'
@@ -21,12 +21,14 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 	
 	public function init() 
 	{
-		$this->extendObject(
-			'Aurora\Modules\Core\Classes\User', 
-			array(
+		\Aurora\Modules\Core\Classes\User::extend(
+			self::GetName(),
+			[
 				'Enabled'	=> array('bool', false, true)
-			)
+			]
+
 		);
+
 		$this->subscribeEvent('Core::Login::after', array($this, 'onAfterLogin'), 10);
 		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
 		$this->subscribeEvent('Autodiscover::GetAutodiscover::after', array($this, 'onAfterGetAutodiscover'));
@@ -57,7 +59,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		{
 			$oUser = \Aurora\System\Api::getAuthenticatedUser();
 			$oLicensing = \Aurora\System\Api::GetModule('Licensing');
-			if (!($oUser && $oUser->{$this->GetName() . '::Enabled'} && $oLicensing->ValidatePeriod('ActiveServer')) || $this->getFreeUsersSlots() < 0)
+			if (!($oUser && $oUser->{self::GetName() . '::Enabled'} && $oLicensing->ValidatePeriod('ActiveServer')) || $this->getFreeUsersSlots() < 0)
 			{
 				$mResult = false;
 			}
@@ -76,15 +78,15 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			{
 				if ($this->getFreeUsersSlots() < 1)
 				{
-					if ($oUser->{$this->GetName() . '::Enabled'})
+					if ($oUser->{self::GetName() . '::Enabled'})
 					{
-						$oUser->{$this->GetName() . '::Enabled'} = false;
+						$oUser->{self::GetName() . '::Enabled'} = false;
 						$oCoreModuleDecorator->UpdateUserObject($oUser);
 					}
 				}
-				elseif ($oUser->{$this->GetName() . '::Enabled'} !== $this->getConfig('EnableForNewUsers'))
+				elseif ($oUser->{self::GetName() . '::Enabled'} !== $this->getConfig('EnableForNewUsers'))
 				{
-					$oUser->{$this->GetName() . '::Enabled'} = $this->getConfig('EnableForNewUsers');
+					$oUser->{self::GetName() . '::Enabled'} = $this->getConfig('EnableForNewUsers');
 					$oCoreModuleDecorator->UpdateUserObject($oUser);
 				}
 			}
@@ -142,7 +144,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			}
 			if ($oUser)
 			{
-				$bResult = $oUser->{$this->GetName() . '::Enabled'};
+				$bResult = $oUser->{self::GetName() . '::Enabled'};
 			}
 		}
 		
@@ -163,7 +165,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		if ($oUser)
 		{
 			return array(
-				'EnableModule' => $oUser->{$this->GetName() . '::Enabled'}
+				'EnableModule' => $oUser->{self::GetName() . '::Enabled'}
 			);
 		}
 		
@@ -181,14 +183,14 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
 		$iUsersCount = $this->GetUsersCount();
-		if (!$oLicensing->IsTrial('ActiveServer') && !$oLicensing->IsUnlim('ActiveServer') && $iUsersCount >= $iLicensedUsersCount && $EnableModule && !$oUser->{$this->GetName() . '::Enabled'})
+		if (!$oLicensing->IsTrial('ActiveServer') && !$oLicensing->IsUnlim('ActiveServer') && $iUsersCount >= $iLicensedUsersCount && $EnableModule && !$oUser->{self::GetName() . '::Enabled'})
 		{
 			throw new Exceptions\UserLimitExceeded(1, null, 'ActiveSync user limit exceeded.');
 		}
 		
 		if ($oUser)
 		{
-			$oUser->{$this->GetName() . '::Enabled'} = $EnableModule;
+			$oUser->{self::GetName() . '::Enabled'} = $EnableModule;
 			$bResult = $oCoreModuleDecorator->UpdateUserObject($oUser);
 		}
 		
@@ -202,7 +204,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			array('PublicId'),
 			0,
 			0,
-			[$this->GetName() . '::Enabled' => true]
+			[self::GetName() . '::Enabled' => true]
 		));		
 	}
 
@@ -224,7 +226,7 @@ class Module extends \Aurora\System\Module\AbstractWebclientModule
 			}
 			if ($oUser)
 			{
-				$bEnableModuleForUser = $oUser->{$this->GetName() . '::Enabled'};
+				$bEnableModuleForUser = $oUser->{self::GetName() . '::Enabled'};
 			}
 		}
 		
