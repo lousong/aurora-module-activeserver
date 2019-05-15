@@ -2,15 +2,11 @@
 
 module.exports = function (oAppData) {
 	var
-		App = require('%PathToCoreWebclientModule%/js/App.js'),
-				
-		Ajax = require('%PathToCoreWebclientModule%/js/Ajax.js'),
-		
 		TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js'),
 
-		Settings = require('modules/%ModuleName%/js/Settings.js'),
-		
-		HeaderItemView = null
+		App = require('%PathToCoreWebclientModule%/js/App.js'),
+				
+		Settings = require('modules/%ModuleName%/js/Settings.js')
 	;
 	
 	Settings.init(oAppData);
@@ -32,7 +28,7 @@ module.exports = function (oAppData) {
 							function() {
 								resolve(require('modules/%ModuleName%/js/views/PerUserAdminSettingsView.js'));
 							},
-							"admin-bundle"
+							'admin-bundle'
 						);
 					},
 					Settings.HashModuleName + '-user',
@@ -45,7 +41,7 @@ module.exports = function (oAppData) {
 							function() {
 								resolve(require('modules/%ModuleName%/js/views/AdminSettingsView.js'));
 							},
-							"admin-bundle"
+							'admin-bundle'
 						);
 					},
 					Settings.HashModuleName + '-system',
@@ -54,7 +50,7 @@ module.exports = function (oAppData) {
 			}
 		};
 	}
-	if (App.getUserRole() === Enums.UserRole.NormalUser || App.getUserRole() === Enums.UserRole.Customer)
+	if (App.isUserNormalOrTenant())
 	{
 		var
 			TextUtils = require('%PathToCoreWebclientModule%/js/utils/Text.js')
