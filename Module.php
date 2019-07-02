@@ -31,7 +31,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 
 		);
 
-		$this->subscribeEvent('Core::Login::after', array($this, 'onAfterLogin'), 10);
+		$this->subscribeEvent('Login::after', array($this, 'onAfterLogin'), 10);
 		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
 		$this->subscribeEvent('Autodiscover::GetAutodiscover::after', array($this, 'onAfterGetAutodiscover'));
 		$this->subscribeEvent('Licensing::UpdateSettings::after', array($this, 'onAfterUpdateLicensingSettings'));
