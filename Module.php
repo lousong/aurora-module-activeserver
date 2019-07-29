@@ -73,8 +73,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		$iUserId = isset($mResult) && (int) $mResult > 0 ? (int) $mResult : 0;
 		if ($iUserId > 0)
 		{
-			$oCoreModuleDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
-			$oUser = $oCoreModuleDecorator->GetUser($iUserId);
+			$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($iUserId);
 
 			if ($oUser)
 			{
@@ -83,13 +82,13 @@ class Module extends \Aurora\System\Module\AbstractModule
 					if ($oUser->{self::GetName() . '::Enabled'})
 					{
 						$oUser->{self::GetName() . '::Enabled'} = false;
-						$oCoreModuleDecorator->UpdateUserObject($oUser);
+						\Aurora\Modules\Core\Module::Decorator()->UpdateUserObject($oUser);
 					}
 				}
 				elseif ($oUser->{self::GetName() . '::Enabled'} !== $this->getConfig('EnableForNewUsers'))
 				{
 					$oUser->{self::GetName() . '::Enabled'} = $this->getConfig('EnableForNewUsers');
-					$oCoreModuleDecorator->UpdateUserObject($oUser);
+					\Aurora\Modules\Core\Module::Decorator()->UpdateUserObject($oUser);
 				}
 			}
 		}
@@ -139,11 +138,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
 		if ($iUserId)
 		{
-			$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
-			if ($oCoreDecorator)
-			{
-				$oUser = $oCoreDecorator->GetUser($iUserId);
-			}
+			$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($iUserId);
 			if ($oUser)
 			{
 				$bResult = $oUser->{self::GetName() . '::Enabled'};
@@ -158,12 +153,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::SuperAdmin);
 		
-		$oUser = null;
-		$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
-		if ($oCoreDecorator)
-		{
-			$oUser = $oCoreDecorator->GetUser($UserId);
-		}
+		$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($UserId);
 		if ($oUser)
 		{
 			return array(
@@ -179,8 +169,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		$bResult = false;
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::SuperAdmin);
 
-		$oCoreModuleDecorator = \Aurora\System\Api::GetModuleDecorator('Core');
-		$oUser = $oCoreModuleDecorator->GetUser($UserId);
+		$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($UserId);
 		
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
@@ -193,7 +182,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		if ($oUser)
 		{
 			$oUser->{self::GetName() . '::Enabled'} = $EnableModule;
-			$bResult = $oCoreModuleDecorator->UpdateUserObject($oUser);
+			$bResult = \Aurora\Modules\Core\Module::Decorator()->UpdateUserObject($oUser);
 		}
 		
 		return $bResult;
@@ -221,11 +210,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
 		if ($iUserId)
 		{
-			$oCoreDecorator = \Aurora\Modules\Core\Module::Decorator();
-			if ($oCoreDecorator)
-			{
-				$oUser = $oCoreDecorator->GetUser($iUserId);
-			}
+			$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($iUserId);
 			if ($oUser)
 			{
 				$bEnableModuleForUser = $oUser->{self::GetName() . '::Enabled'};
