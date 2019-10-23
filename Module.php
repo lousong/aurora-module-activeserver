@@ -41,7 +41,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	{
 		$mResult = 0;
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
-		if ($oLicensing->IsTrial('ActiveServer'))
+		if ($oLicensing->IsTrial('ActiveServer') || $oLicensing->IsUnlim('ActiveServer'))
 		{
 			$mResult = 1;
 		}
