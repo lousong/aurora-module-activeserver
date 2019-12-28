@@ -191,12 +191,9 @@ class Module extends \Aurora\System\Module\AbstractModule
 	protected function GetUsersCount()
 	{
 		$this->oEavManager = \Aurora\System\Managers\Eav::getInstance();
-		return count($this->oEavManager->getEntities('Aurora\Modules\Core\Classes\User',
-			array('PublicId'),
-			0,
-			0,
+		return $this->oEavManager->getEntitiesCount(\Aurora\Modules\Core\Classes\User::class,
 			[self::GetName() . '::Enabled' => true]
-		));		
+		);		
 	}
 
 	public function GetSettings()
