@@ -26,7 +26,7 @@ function SettingsFormView()
 	this.server = ko.observable(Settings.Server);
 	this.linkToManual = ko.observable(Settings.LinkToManual);
 	this.infoCredentials = TextUtils.i18n('%MODULENAME%/INFO_CREDENTIALS', {'EMAIL': App.getUserPublicId()});
-	this.bDemo = true;//UserSettings.IsDemo;
+	this.bDemo = UserSettings.IsDemo;
 	this.infoDemo = TextUtils.i18n('%MODULENAME%/INFO_DEMO', {'PRODUCT_NAME': Settings.ProductName});
 }
 
