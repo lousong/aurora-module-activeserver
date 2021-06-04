@@ -19,24 +19,16 @@ class Module extends \Aurora\System\Module\AbstractModule
 	protected $aRequireModules = array(
 		'Licensing'
 	);
-	
-	
-	public function init() 
+
+
+	public function init()
 	{
-		\Aurora\Modules\Core\Classes\User::extend(
-			self::GetName(),
-			[
-				'Enabled'	=> array('bool', false, true)
-			]
-
-		);
-
 		$this->subscribeEvent('Login::after', array($this, 'onAfterLogin'), 10);
 		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
 		$this->subscribeEvent('Autodiscover::GetAutodiscover::after', array($this, 'onAfterGetAutodiscover'));
 		$this->subscribeEvent('Licensing::UpdateSettings::after', array($this, 'onAfterUpdateLicensingSettings'));
-	}	
-	
+	}
+
 	protected function getFreeUsersSlots()
 	{
 		$mResult = 0;
@@ -53,7 +45,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		}
 		return $mResult;
 	}
-	
+
 	public function onAfterLogin(&$aArgs, &$mResult)
 	{
 		$sAgent = $this->oHttp->GetHeader('X-User-Agent');
@@ -66,8 +58,8 @@ class Module extends \Aurora\System\Module\AbstractModule
 				$mResult = false;
 			}
 		}
-	}	
-	
+	}
+
 	public function onAfterCreateUser(&$aArgs, &$mResult)
 	{
 		$iUserId = isset($mResult) && (int) $mResult > 0 ? (int) $mResult : 0;
@@ -81,23 +73,23 @@ class Module extends \Aurora\System\Module\AbstractModule
 				{
 					if ($oUser->{self::GetName() . '::Enabled'})
 					{
-						$oUser->{self::GetName() . '::Enabled'} = false;
+						$oUser->setExtendedProp(self::GetName() . '::Enabled', false);
 						\Aurora\Modules\Core\Module::Decorator()->UpdateUserObject($oUser);
 					}
 				}
 				elseif ($oUser->{self::GetName() . '::Enabled'} !== $this->getConfig('EnableForNewUsers'))
 				{
-					$oUser->{self::GetName() . '::Enabled'} = $this->getConfig('EnableForNewUsers');
+					$oUser->setExtendedProp(self::GetName() . '::Enabled', $this->getConfig('EnableForNewUsers'));
 					\Aurora\Modules\Core\Module::Decorator()->UpdateUserObject($oUser);
 				}
 			}
 		}
-	}	
-	
+	}
+
 	public function onAfterGetAutodiscover(&$aArgs, &$mResult)
 	{
 		$sEmail = $aArgs['Email'];
-		
+
 		$sResult = \implode("\n", array(
 '		<Culture>en:us</Culture>',
 '        <User>',
@@ -114,7 +106,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 '            </Settings>',
 '        </Action>'
 		));
-		
+
 		$mResult = $mResult . $sResult;
 	}
 
@@ -134,7 +126,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	{
 		$bResult = false;
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::NormalUser);
-		
+
 		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
 		if ($iUserId)
 		{
@@ -144,7 +136,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 				$bResult = $oUser->{self::GetName() . '::Enabled'};
 			}
 		}
-		
+
 		return $bResult;
 	}
 
@@ -152,7 +144,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 	public function GetPerUserSettings($UserId)
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::SuperAdmin);
-		
+
 		$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($UserId);
 		if ($oUser)
 		{
@@ -160,17 +152,17 @@ class Module extends \Aurora\System\Module\AbstractModule
 				'EnableModule' => $oUser->{self::GetName() . '::Enabled'}
 			);
 		}
-		
+
 		return null;
 	}
-	
+
 	public function UpdatePerUserSettings($UserId, $EnableModule)
 	{
 		$bResult = false;
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::SuperAdmin);
 
 		$oUser = \Aurora\Modules\Core\Module::Decorator()->GetUserUnchecked($UserId);
-		
+
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 		$iLicensedUsersCount = (int) $oLicensing->GetUsersCount('ActiveServer');
 		$iUsersCount = $this->GetUsersCount();
@@ -178,32 +170,29 @@ class Module extends \Aurora\System\Module\AbstractModule
 		{
 			throw new Exceptions\UserLimitExceeded(1, null, 'ActiveSync user limit exceeded.');
 		}
-		
+
 		if ($oUser)
 		{
-			$oUser->{self::GetName() . '::Enabled'} = $EnableModule;
+			$oUser->setExtendedProp(self::GetName() . '::Enabled', $EnableModule);
 			$bResult = \Aurora\Modules\Core\Module::Decorator()->UpdateUserObject($oUser);
 		}
-		
+
 		return $bResult;
 	}
-	
+
 	protected function GetUsersCount()
 	{
-		$this->oEavManager = \Aurora\System\Managers\Eav::getInstance();
-		return $this->oEavManager->getEntitiesCount(\Aurora\Modules\Core\Classes\User::class,
-			[self::GetName() . '::Enabled' => true]
-		);		
+		return \Aurora\Modules\Core\Models\User::where('Properties->'.self::GetName() . '::Enabled', true)->count();
 	}
 
 	public function GetSettings()
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast( \Aurora\System\Enums\UserRole::NormalUser);
-		
+
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 
 		$bEnableModuleForUser = false;
-		
+
 		$iUserId = \Aurora\System\Api::getAuthenticatedUserId();
 		if ($iUserId)
 		{
@@ -213,7 +202,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 				$bEnableModuleForUser = $oUser->{self::GetName() . '::Enabled'};
 			}
 		}
-		
+
 		$iFreeSlots = $this->getFreeUsersSlots();
 		if ($iFreeSlots < 0)
 		{
@@ -233,13 +222,13 @@ class Module extends \Aurora\System\Module\AbstractModule
 			'LinkToManual' => $this->getConfig('LinkToManual', '')
 		);
 	}
-	
+
 	public function UpdateSettings($EnableModule, $EnableForNewUsers, $Server, $LinkToManual)
 	{
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::TenantAdmin);
-		
+
 		$bResult = false;
-		
+
 		try
 		{
 			$this->setConfig('Disabled', !$EnableModule);
@@ -252,20 +241,20 @@ class Module extends \Aurora\System\Module\AbstractModule
 		{
 			throw new \Aurora\System\Exceptions\ApiException(\Aurora\System\Notifications::CanNotSaveSettings);
 		}
-		
+
 		return $bResult;
-	}	
-	
+	}
+
 	public function GetLicenseInfo()
 	{
 		$mResult = false;
-				
+
 		$oLicensing = \Aurora\System\Api::GetModule('Licensing');
 		if ($oLicensing)
 		{
 			$mResult = $oLicensing->GetLicenseInfo('ActiveServer');
 		}
-		
+
 		return $mResult;
-	}	
+	}
 }
