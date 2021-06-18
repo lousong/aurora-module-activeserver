@@ -110,6 +110,7 @@ export default {
   mounted () {
     this.populate()
     this.getLicenseInfo()
+    this.getSettings()
   },
   beforeRouteLeave (to, from, next) {
     if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
@@ -148,6 +149,7 @@ export default {
               linkToManual: this.linkToManual
             })
             this.populate()
+            this.getSettings()
             notification.showReport(this.$t('COREWEBCLIENT.REPORT_SETTINGS_UPDATE_SUCCESS'))
           } else {
             notification.showError(this.$t('COREWEBCLIENT.ERROR_SAVING_SETTINGS_FAILED'))
@@ -164,31 +166,30 @@ export default {
         methodName: 'GetLicenseInfo',
       }).then(result => {
         this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_INVALID')
-        const data = result && result.Result
-        if (data) {
-          switch (data.Type) {
+        if (result) {
+          switch (result.Type) {
             case 0:
               this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_UNLIM');
               break;
             case 1:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_PERMANENT_PLURAL', { COUNT: data.Count }, null, data.Count);
+              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_PERMANENT_PLURAL', { COUNT: result.Count }, null, result.Count);
               break;
             case 2:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_DOMAINS_PLURAL', { COUNT: data.Count }, null, data.Count);
+              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_DOMAINS_PLURAL', { COUNT: result.Count }, null, result.Count);
               break;
             case 4:
-              if (data.ExpiresIn < 1) {
+              if (result.ExpiresIn < 1) {
                 this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO');
               }
               break;
             case 3:
             case 10:
-              this.licenceType = data.Type === 3
-                ? this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_ANNUAL_PLURAL', { COUNT: data.Count }, null, data.Count)
+              this.licenceType = result.Type === 3
+                ? this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_ANNUAL_PLURAL', { COUNT: result.Count }, null, result.Count)
                 : this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_TRIAL');
-              if (data.ExpiresIn !== '*') {
-                if (data.ExpiresIn > 0) {
-                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRES_IN_PLURAL', { DAYS: data.ExpiresIn }, null, data.ExpiresIn);
+              if (result.ExpiresIn !== '*') {
+                if (result.ExpiresIn > 0) {
+                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRES_IN_PLURAL', { DAYS: result.ExpiresIn }, null, result.ExpiresIn);
                 } else {
                   this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRED') + ' ' + this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO');
                 }
@@ -198,14 +199,21 @@ export default {
         }
       })
     },
+    getSettings () {
+      webApi.sendRequest({
+        moduleName: 'ActiveServer',
+        methodName: 'GetSettings',
+      }).then(result => {
+        this.usersCount = result.UsersCount
+        this.licensedUsersCount = result.LicensedUsersCount
+        this.usersFreeSlots = result.UsersFreeSlots
+      })
+    },
     populate () {
       const data = settings.getActiveServerSettings()
       this.enableModule = data.enableModule
       this.enableModuleForUser = data.enableModuleForUser
       this.enableForNewUsers = data.enableForNewUsers
-      this.usersCount = data.usersCount
-      this.licensedUsersCount = data.licensedUsersCount
-      this.usersFreeSlots = data.usersFreeSlots
       this.server = data.server
       this.linkToManual = data.linkToManual
       this.productName = data.productName
