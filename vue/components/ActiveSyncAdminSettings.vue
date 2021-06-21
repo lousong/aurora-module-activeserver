@@ -82,9 +82,9 @@
 
 import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
 import settings from '../../../ActiveServer/vue/settings'
-import webApi from '../../../AdminPanelWebclient/vue/src/utils/web-api'
-import notification from '../../../AdminPanelWebclient/vue/src/utils/notification'
-import errors from '../../../AdminPanelWebclient/vue/src/utils/errors'
+import webApi from 'src/utils/web-api'
+import notification from 'src/utils/notification'
+import errors from 'src/utils/errors'
 import _ from 'lodash'
 
 export default {
@@ -169,32 +169,32 @@ export default {
         if (result) {
           switch (result.Type) {
             case 0:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_UNLIM');
-              break;
+              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_UNLIM')
+              break
             case 1:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_PERMANENT_PLURAL', { COUNT: result.Count }, null, result.Count);
-              break;
+              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_PERMANENT_PLURAL', { COUNT: result.Count }, null, result.Count)
+              break
             case 2:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_DOMAINS_PLURAL', { COUNT: result.Count }, null, result.Count);
-              break;
+              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_DOMAINS_PLURAL', { COUNT: result.Count }, null, result.Count)
+              break
             case 4:
               if (result.ExpiresIn < 1) {
-                this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO');
+                this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO')
               }
-              break;
+              break
             case 3:
             case 10:
               this.licenceType = result.Type === 3
                 ? this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_ANNUAL_PLURAL', { COUNT: result.Count }, null, result.Count)
-                : this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_TRIAL');
+                : this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_TRIAL')
               if (result.ExpiresIn !== '*') {
                 if (result.ExpiresIn > 0) {
-                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRES_IN_PLURAL', { DAYS: result.ExpiresIn }, null, result.ExpiresIn);
+                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRES_IN_PLURAL', { DAYS: result.ExpiresIn }, null, result.ExpiresIn)
                 } else {
-                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRED') + ' ' + this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO');
+                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRED') + ' ' + this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO')
                 }
               }
-              break;
+              break
           }
         }
       })
