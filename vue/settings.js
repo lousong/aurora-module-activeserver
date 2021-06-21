@@ -10,10 +10,10 @@ class ActiveServerSettings {
       this.enableModuleForUser = typesUtils.pBool(activeServerWebclientData.EnableModuleForUser, this.enableModuleForUser)
       this.enableForNewUsers = typesUtils.pBool(activeServerWebclientData.EnableForNewUsers, this.enableForNewUsers)
       this.usersCount = typesUtils.pInt(activeServerWebclientData.UsersCount, this.usersCount)
-      this.licensedUsersCount = activeServerWebclientData.LicensedUsersCount
-      this.usersFreeSlots = activeServerWebclientData.UsersFreeSlots
-      this.server = activeServerWebclientData.Server
-      this.linkToManual = activeServerWebclientData.LinkToManual
+      this.licensedUsersCount = typesUtils.pInt(activeServerWebclientData.LicensedUsersCount)
+      this.usersFreeSlots = typesUtils.pInt(activeServerWebclientData.UsersFreeSlots)
+      this.server = typesUtils.pString(activeServerWebclientData.Server)
+      this.linkToManual = typesUtils.pString(activeServerWebclientData.LinkToManual)
     }
   }
 
