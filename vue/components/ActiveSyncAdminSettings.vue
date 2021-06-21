@@ -130,7 +130,7 @@ export default {
       if (!this.saving) {
         this.saving = true
         const parameters = {
-          EnableModule: true,
+          EnableModule: true, // it must be sent, otherwise the module will be disabled at all
           EnableForNewUsers: this.enableForNewUsers,
           Server: this.server,
           LinkToManual: this.linkToManual
