@@ -6,10 +6,10 @@ class ActiveServerSettings {
   constructor (appData) {
     const activeServerWebclientData = typesUtils.pObject(appData.ActiveServer)
     if (!_.isEmpty(activeServerWebclientData)) {
-      this.enableModule = typesUtils.pBool(activeServerWebclientData.EnableModule, this.enableModule)
-      this.enableModuleForUser = typesUtils.pBool(activeServerWebclientData.EnableModuleForUser, this.enableModuleForUser)
-      this.enableForNewUsers = typesUtils.pBool(activeServerWebclientData.EnableForNewUsers, this.enableForNewUsers)
-      this.usersCount = typesUtils.pInt(activeServerWebclientData.UsersCount, this.usersCount)
+      this.enableModule = typesUtils.pBool(activeServerWebclientData.EnableModule)
+      this.enableModuleForUser = typesUtils.pBool(activeServerWebclientData.EnableModuleForUser)
+      this.enableForNewUsers = typesUtils.pBool(activeServerWebclientData.EnableForNewUsers)
+      this.usersCount = typesUtils.pInt(activeServerWebclientData.UsersCount)
       this.licensedUsersCount = typesUtils.pInt(activeServerWebclientData.LicensedUsersCount)
       this.usersFreeSlots = typesUtils.pInt(activeServerWebclientData.UsersFreeSlots)
       this.server = typesUtils.pString(activeServerWebclientData.Server)

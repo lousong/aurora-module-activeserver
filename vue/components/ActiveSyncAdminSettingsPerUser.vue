@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     hasChanges () {
-      const enableActiveSync = _.isFunction(this.user?.getData) ? this.user?.getData('ActiveServer::Enabled') : 0
+      const enableActiveSync = _.isFunction(this.user?.getData) ? this.user?.getData('ActiveServer::Enabled') : false
       return this.enableActiveSync !== enableActiveSync
     },
     parseRoute () {
@@ -108,10 +108,10 @@ export default {
       }).then(result => {
         this.saving = false
         if (result) {
-          cache.getUser(parameters.TenantId, parameters.EntityId).then(({ user }) => {
+          cache.getUser(parameters.TenantId, this.user?.id).then(({ user }) => {
             user.updateData([{
               field: 'ActiveServer::Enabled',
-              value: parameters.EnableModule
+              value: typesUtils.pBool(this.enableActiveSync)
             }])
             this.populate()
           })
