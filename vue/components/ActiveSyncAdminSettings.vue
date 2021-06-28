@@ -6,63 +6,59 @@
       </div>
       <q-card flat bordered class="card-edit-settings">
         <q-card-section>
-          <div class="row">
-            <q-item>
-              <q-item-section>
-                <q-checkbox v-model="enableForNewUsers" color="teal">
-                  <q-item-label caption>{{ $t('ACTIVESERVER.ENABLE_FOR_NEW_USERS') }}</q-item-label>
-                </q-checkbox>
-              </q-item-section>
-            </q-item>
+          <div class="row q-mb-sm">
+            <q-checkbox dense v-model="enableForNewUsers" color="teal">
+              <q-item-label>{{ $t('ACTIVESERVER.ENABLE_FOR_NEW_USERS') }}</q-item-label>
+            </q-checkbox>
           </div>
-          <div class="row q-ml-md">
-            <div class="q-ml-sm">
+          <div class="row">
+            <div>
               <q-item-label caption v-html="$t('ACTIVESERVER.HINT_FOR_NEW_USERS')"/>
             </div>
           </div>
-          <div class="row q-my-md q-ml-md">
-            <div class="col-2 q-ml-sm" v-t="'ACTIVESERVER.LABEL_LICENSING_MAX_NUMBER_OF_USERS'"></div>
+          <div class="row q-my-md">
+            <div class="col-2" v-t="'ACTIVESERVER.LABEL_LICENSING_MAX_NUMBER_OF_USERS'"></div>
             <div class="col-5 text-weight-medium">
               <span>{{ licensedUsersCount }}</span>
             </div>
           </div>
-          <div class="row q-mb-md q-ml-md">
-            <div class="col-2 q-ml-sm" v-t="'ACTIVESERVER.LABEL_LICENSING_USERS_ALLOCATED'"></div>
+          <div class="row q-mb-md">
+            <div class="col-2" v-t="'ACTIVESERVER.LABEL_LICENSING_USERS_ALLOCATED'"></div>
             <div class="col-5 text-weight-medium">
               <span>{{ usersCount }}</span>
             </div>
           </div>
-          <div class="row q-mb-md q-ml-md">
-            <div class="col-2 q-ml-sm" v-t="'ACTIVESERVER.LABEL_LICENSING_FREE_SLOTS'"></div>
+          <div class="row q-mb-md">
+            <div class="col-2" v-t="'ACTIVESERVER.LABEL_LICENSING_FREE_SLOTS'"></div>
             <div class="col-5 text-weight-medium">
               <span>{{ usersFreeSlots }}</span>
             </div>
           </div>
-          <div class="row q-mb-md q-ml-md">
-            <div class="col-2 q-ml-sm" v-t="'ACTIVESERVER.LABEL_LICENSING_TYPE'"></div>
+          <div class="row q-mb-md">
+            <div class="col-2" v-t="'ACTIVESERVER.LABEL_LICENSING_TYPE'"></div>
             <div class="col-5 text-weight-medium">
               <span>{{ licenceType }}</span>
             </div>
           </div>
-          <div class="row q-my-md q-ml-md">
-            <div class="col-2 q-my-sm q-ml-sm" v-t="'ACTIVESERVER.LABEL_SERVER_HOST'"></div>
+          <div class="row q-my-md">
+            <div class="col-2 q-my-sm" v-t="'ACTIVESERVER.LABEL_SERVER_HOST'"></div>
             <div class="col-5">
               <q-input outlined dense class="bg-white" v-model="server"/>
             </div>
           </div>
-          <div class="row q-ml-md">
-            <div class="q-ml-sm">
+          <div class="row">
+            <div>
               <q-item-label caption v-html="$t('ACTIVESERVER.HINT_SERVER_HOST')"/>
             </div>
           </div>
-          <div class="row q-my-md q-ml-md">
-            <div class="col-2 q-my-sm q-ml-sm" v-t="'ACTIVESERVER.LABEL_LINK'"></div>
+          <div class="row q-my-md">
+            <div class="col-2 q-my-sm" v-t="'ACTIVESERVER.LABEL_LINK'"></div>
             <div class="col-5">
               <q-input outlined dense class="bg-white" v-model="linkToManual"/>
             </div>
           </div>
-          <div class="row q-ml-md">
-            <div class="q-ml-sm">
+          <div class="row">
+            <div>
               <q-item-label caption v-html="$t('ACTIVESERVER.HINT_LINK_TO_MANUAL')"/>
             </div>
           </div>
