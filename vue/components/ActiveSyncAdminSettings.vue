@@ -7,7 +7,7 @@
       <q-card flat bordered class="card-edit-settings">
         <q-card-section>
           <div class="row q-mb-sm">
-            <q-checkbox dense v-model="enableForNewUsers" color="teal">
+            <q-checkbox dense v-model="enableForNewUsers">
               <q-item-label>{{ $t('ACTIVESERVER.ENABLE_FOR_NEW_USERS') }}</q-item-label>
             </q-checkbox>
           </div>
