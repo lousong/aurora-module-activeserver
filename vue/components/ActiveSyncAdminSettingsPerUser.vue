@@ -18,6 +18,9 @@
                :label="saving ? $t('COREWEBCLIENT.ACTION_SAVE_IN_PROGRESS') : $t('COREWEBCLIENT.ACTION_SAVE')" @click="updateSettingsForEntity"/>
       </div>
     </div>
+    <q-inner-loading style="justify-content: flex-start;" :showing="loading || saving">
+      <q-linear-progress query class="q-mt-sm" />
+    </q-inner-loading>
     <UnsavedChangesDialog ref="unsavedChangesDialog"/>
   </q-scroll-area>
 </template>
@@ -43,6 +46,7 @@ export default {
   data () {
     return {
       saving: false,
+      loading: false,
       enableActiveSync: false
     }
   },
