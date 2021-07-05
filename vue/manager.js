@@ -15,7 +15,7 @@ export default {
         tabName: 'activeserver-system',
         title: 'ACTIVESERVER.LABEL_SETTINGS_TAB',
         component () {
-          return import('src/../../../ActiveServer/vue/components/ActiveSyncAdminSettings')
+          return import('./components/ActiveSyncAdminSettings')
         },
       },
     ]
@@ -32,7 +32,7 @@ export default {
         ],
         title: 'ACTIVESERVER.LABEL_SETTINGS_TAB',
         component () {
-          return import('src/../../../ActiveServer/vue/components/ActiveSyncAdminSettingsPerUser')
+          return import('./components/ActiveSyncAdminSettingsPerUser')
         }
       }
     ]
