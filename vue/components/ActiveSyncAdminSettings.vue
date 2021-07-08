@@ -43,7 +43,7 @@
           <div class="row q-my-md">
             <div class="col-2 q-my-sm" v-t="'ACTIVESERVER.LABEL_SERVER_HOST'"></div>
             <div class="col-5">
-              <q-input outlined dense class="bg-white" v-model="server"/>
+              <q-input outlined dense bg-color="white" v-model="server"/>
             </div>
           </div>
           <div class="row">
@@ -54,7 +54,7 @@
           <div class="row q-my-md">
             <div class="col-2 q-my-sm" v-t="'ACTIVESERVER.LABEL_LINK'"></div>
             <div class="col-5">
-              <q-input outlined dense class="bg-white" v-model="linkToManual"/>
+              <q-input outlined dense bg-color="white" v-model="linkToManual"/>
             </div>
           </div>
           <div class="row">
