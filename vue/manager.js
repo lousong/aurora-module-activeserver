@@ -3,7 +3,7 @@ import settings from '../../ActiveServer/vue/settings'
 export default {
   moduleName: 'ActiveServer',
 
-  requiredModules: [],
+  requiredModules: ['ActiveServer'],
 
   init (appData) {
     settings.init(appData)
