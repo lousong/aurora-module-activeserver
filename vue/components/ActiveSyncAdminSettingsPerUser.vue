@@ -86,7 +86,7 @@ export default {
           this.loading = false
           if (user && _.isFunction(user?.getData)) {
             this.user = user
-            this.enableActiveSync = user.getData('ActiveServer::Enabled')
+            this.enableActiveSync = typesUtils.pBool(user.getData('ActiveServer::Enabled'))
           } else {
             this.$emit('no-user-found')
           }
