@@ -21,7 +21,6 @@
     <q-inner-loading style="justify-content: flex-start;" :showing="loading || saving">
       <q-linear-progress query />
     </q-inner-loading>
-    <UnsavedChangesDialog ref="unsavedChangesDialog"/>
   </q-scroll-area>
 </template>
 
@@ -35,13 +34,9 @@ import webApi from 'src/utils/web-api'
 
 import cache from 'src/cache'
 
-import UnsavedChangesDialog from 'src/components/UnsavedChangesDialog'
-
 export default {
   name: 'ActiveSyncAdminSettingsPerUser',
-  components: {
-    UnsavedChangesDialog
-  },
+
   data () {
     return {
       saving: false,
@@ -57,18 +52,30 @@ export default {
   mounted() {
     this.parseRoute()
   },
+
   beforeRouteLeave (to, from, next) {
-    if (this.hasChanges() && _.isFunction(this?.$refs?.unsavedChangesDialog?.openConfirmDiscardChangesDialog)) {
-      this.$refs.unsavedChangesDialog.openConfirmDiscardChangesDialog(next)
-    } else {
-      next()
-    }
+    this.doBeforeRouteLeave(to, from, next)
   },
+
   methods: {
+    /**
+     * Method is used in doBeforeRouteLeave mixin
+     */
     hasChanges () {
       const enableActiveSync = _.isFunction(this.user?.getData) ? this.user?.getData('ActiveServer::Enabled') : false
       return this.enableActiveSync !== enableActiveSync
     },
+
+    /**
+     * Method is used in doBeforeRouteLeave mixin,
+     * do not use async methods - just simple and plain reverting of values
+     * !! hasChanges method must return true after executing revertChanges method
+     */
+    revertChanges () {
+      const enableActiveSync = _.isFunction(this.user?.getData) ? this.user?.getData('ActiveServer::Enabled') : false
+      this.enableActiveSync = enableActiveSync
+    },
+
     parseRoute () {
       const userId = typesUtils.pPositiveInt(this.$route?.params?.id)
       if (this.user?.id !== userId) {
