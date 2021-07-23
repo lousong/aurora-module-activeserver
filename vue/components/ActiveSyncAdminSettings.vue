@@ -7,16 +7,6 @@
       <q-card flat bordered class="card-edit-settings">
         <q-card-section>
           <div class="row q-mb-sm">
-            <q-checkbox dense v-model="enableForNewUsers">
-              <q-item-label>{{ $t('ACTIVESERVER.ENABLE_FOR_NEW_USERS') }}</q-item-label>
-            </q-checkbox>
-          </div>
-          <div class="row">
-            <div>
-              <q-item-label caption v-html="$t('ACTIVESERVER.HINT_FOR_NEW_USERS')"/>
-            </div>
-          </div>
-          <div class="row q-my-md">
             <div class="col-2" v-t="'ACTIVESERVER.LABEL_LICENSING_MAX_NUMBER_OF_USERS'"></div>
             <div class="col-5 text-weight-medium">
               <span>{{ licensedUsersCount }}</span>
@@ -60,6 +50,16 @@
           <div class="row">
             <div>
               <q-item-label caption v-html="$t('ACTIVESERVER.HINT_LINK_TO_MANUAL')"/>
+            </div>
+          </div>
+          <div class="row q-my-md">
+            <q-checkbox dense v-model="enableForNewUsers">
+              <q-item-label>{{ $t('ACTIVESERVER.ENABLE_FOR_NEW_USERS') }}</q-item-label>
+            </q-checkbox>
+          </div>
+          <div class="row">
+            <div>
+              <q-item-label caption v-html="$t('ACTIVESERVER.HINT_FOR_NEW_USERS')"/>
             </div>
           </div>
         </q-card-section>
@@ -175,10 +175,10 @@ export default {
               this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_UNLIM')
               break
             case 1:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_PERMANENT_PLURAL', { COUNT: result.Count }, null, result.Count)
+              this.licenceType = this.$tc('LICENSINGWEBCLIENT.LABEL_TYPE_PERMANENT_PLURAL', result.Count, { COUNT: result.Count })
               break
             case 2:
-              this.licenceType = this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_DOMAINS_PLURAL', { COUNT: result.Count }, null, result.Count)
+              this.licenceType = this.$tc('LICENSINGWEBCLIENT.LABEL_TYPE_DOMAINS_PLURAL', result.Count, { COUNT: result.Count })
               break
             case 4:
               if (result.ExpiresIn < 1) {
@@ -188,11 +188,11 @@ export default {
             case 3:
             case 10:
               this.licenceType = result.Type === 3
-                ? this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_ANNUAL_PLURAL', { COUNT: result.Count }, null, result.Count)
+                ? this.$tc('LICENSINGWEBCLIENT.LABEL_TYPE_ANNUAL_PLURAL', result.Count, { COUNT: result.Count })
                 : this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_TRIAL')
               if (result.ExpiresIn !== '*') {
                 if (result.ExpiresIn > 0) {
-                  this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRES_IN_PLURAL', { DAYS: result.ExpiresIn }, null, result.ExpiresIn)
+                  this.licenceType += this.$tc('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRES_IN_PLURAL', result.ExpiresIn, { DAYS: result.ExpiresIn })
                 } else {
                   this.licenceType += this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_EXPIRED') + ' ' + this.$t('LICENSINGWEBCLIENT.LABEL_TYPE_OUTDATED_INFO')
                 }
