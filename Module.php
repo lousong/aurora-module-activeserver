@@ -23,6 +23,14 @@ class Module extends \Aurora\System\Module\AbstractModule
 
 	public function init()
 	{
+		\Aurora\Modules\Core\Classes\User::extend(
+			self::GetName(),
+			[
+				'Enabled'	=> array('bool', false, true)
+			]
+
+		);
+
 		$this->subscribeEvent('Login::after', array($this, 'onAfterLogin'), 10);
 		$this->subscribeEvent('Core::CreateUser::after', array($this, 'onAfterCreateUser'), 10);
 		$this->subscribeEvent('Autodiscover::GetAutodiscover::after', array($this, 'onAfterGetAutodiscover'));
