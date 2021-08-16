@@ -6,7 +6,7 @@
       </div>
       <q-card flat bordered class="card-edit-settings">
         <q-card-section>
-          <div class="row q-my-sm">
+          <div class="row">
             <q-checkbox dense v-model="enableActiveSync">
               <q-item-label v-t="'ACTIVESERVER.LABEL_ENABLE_ACTIVESYNC'"/>
             </q-checkbox>
