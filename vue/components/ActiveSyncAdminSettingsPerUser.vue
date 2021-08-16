@@ -62,7 +62,7 @@ export default {
      * Method is used in doBeforeRouteLeave mixin
      */
     hasChanges () {
-      const enableActiveSync = _.isFunction(this.user?.getData) ? this.user?.getData('ActiveServer::Enabled') : false
+      const enableActiveSync = typesUtils.pBool(this.user?.completeData['ActiveServer::Enabled'])
       return this.enableActiveSync !== enableActiveSync
     },
 
@@ -72,8 +72,7 @@ export default {
      * !! hasChanges method must return true after executing revertChanges method
      */
     revertChanges () {
-      const enableActiveSync = _.isFunction(this.user?.getData) ? this.user?.getData('ActiveServer::Enabled') : false
-      this.enableActiveSync = enableActiveSync
+      this.enableActiveSync = typesUtils.pBool(this.user?.completeData['ActiveServer::Enabled'])
     },
 
     parseRoute () {
@@ -93,7 +92,7 @@ export default {
           this.loading = false
           if (user && _.isFunction(user?.getData)) {
             this.user = user
-            this.enableActiveSync = typesUtils.pBool(user.getData('ActiveServer::Enabled'))
+            this.enableActiveSync = typesUtils.pBool(user?.completeData['ActiveServer::Enabled'])
           } else {
             this.$emit('no-user-found')
           }
