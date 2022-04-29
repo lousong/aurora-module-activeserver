@@ -7,6 +7,8 @@
 
 namespace Aurora\Modules\ActiveServer;
 
+use Aurora\Api;
+
 /**
  * @license https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @license https://afterlogic.com/products/common-licensing Afterlogic Software License
@@ -61,9 +63,16 @@ class Module extends \Aurora\System\Module\AbstractModule
 		{
 			$oUser = \Aurora\System\Api::getAuthenticatedUser();
 			$oLicensing = \Aurora\System\Api::GetModule('Licensing');
-			if (!($oUser && $oUser->{self::GetName() . '::Enabled'} && $oLicensing->ValidatePeriod('ActiveServer')) || $this->getFreeUsersSlots() < 0)
-			{
+
+			if (!$oLicensing->ValidatePeriod('ActiveServer')) {
 				$mResult = false;
+				Api::Log('Auth error: ActiveServer is invalid');
+			} else if ($this->getFreeUsersSlots() < 0) {
+				$mResult = false;
+				Api::Log('Auth error: User limit exceeded, ActiveServer is disabled');
+			} else if (!($oUser && $oUser->{self::GetName() . '::Enabled'})) {
+				$mResult = false;
+				Api::Log('Auth error: ActiveServer is not enabled for the user');
 			}
 		}
 	}
