@@ -1,9 +1,11 @@
-import settings from '../../ActiveServer/vue/settings'
+import settings from './settings'
+
+import ActiveSyncAdminSettingsPerUser from './components/ActiveSyncAdminSettingsPerUser'
 
 export default {
   moduleName: 'ActiveServer',
 
-  requiredModules: ['ActiveServer'],
+  requiredModules: [],
 
   init (appData) {
     settings.init(appData)
@@ -12,28 +14,26 @@ export default {
   getAdminSystemTabs () {
     return [
       {
-        tabName: 'activeserver-system',
-        title: 'ACTIVESERVER.LABEL_SETTINGS_TAB',
-        component () {
-          return import('./components/ActiveSyncAdminSettings')
-        },
+        tabName: 'activeserver',
+        tabTitle: 'ACTIVESERVER.LABEL_SETTINGS_TAB',
+        tabRouteChildren: [
+          { path: 'activeserver', component: () => import('./components/ActiveSyncAdminSettings') },
+        ],
       },
     ]
   },
+
   getAdminUserTabs () {
     return [
       {
-        tabName: 'activeserver-user',
-        paths: [
-          'id/:id/activeserver-user',
-          'search/:search/id/:id/activeserver-user',
-          'page/:page/id/:id/activeserver-user',
-          'search/:search/page/:page/id/:id/activeserver-user',
+        tabName: 'activeserver',
+        tabTitle: 'ACTIVESERVER.LABEL_SETTINGS_TAB',
+        tabRouteChildren: [
+          { path: 'id/:id/activeserver', component: ActiveSyncAdminSettingsPerUser },
+          { path: 'search/:search/id/:id/activeserver', component: ActiveSyncAdminSettingsPerUser },
+          { path: 'page/:page/id/:id/activeserver', component: ActiveSyncAdminSettingsPerUser },
+          { path: 'search/:search/page/:page/id/:id/activeserver', component: ActiveSyncAdminSettingsPerUser },
         ],
-        title: 'ACTIVESERVER.LABEL_SETTINGS_TAB',
-        component () {
-          return import('./components/ActiveSyncAdminSettingsPerUser')
-        }
       }
     ]
   },
