@@ -1,34 +1,34 @@
 {
-  "Disabled": [
-    false,
-    "bool"
-  ],
-  "Disabled_Description": [
-    "",
-    "string"
-  ],
-  "EnableForNewUsers": [
-    false,
-    "bool"
-  ],
-  "EnableForNewUsers_Description": [
-    "",
-    "string"
-  ],
-  "Server": [
-    "",
-    "string"
-  ],
-  "Server_Description": [
-    "",
-    "string"
-  ],
-  "LinkToManual": [
-    "",
-    "string"
-  ],
-  "LinkToManual_Description": [
-    "",
-    "string"
-  ]
+	"Disabled": [
+		false,
+		"bool"
+	],
+	"Disabled_Description": [
+		"",
+		"string"
+	],
+	"EnableForNewUsers": [
+		false,
+		"bool"
+	],
+	"EnableForNewUsers_Description": [
+		"",
+		"string"
+	],
+	"Server": [
+		"",
+		"string"
+	],
+	"Server_Description": [
+		"",
+		"string"
+	],
+	"LinkToManual": [
+		"",
+		"string"
+	],
+	"LinkToManual_Description": [
+		"",
+		"string"
+	]
 }
