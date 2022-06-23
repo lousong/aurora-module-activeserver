@@ -4,7 +4,7 @@
 		"bool"
 	],
 	"Disabled_Description": [
-		"",
+		"Setting to true disables the module",
 		"string"
 	],
 	"EnableForNewUsers": [
@@ -12,7 +12,7 @@
 		"bool"
 	],
 	"EnableForNewUsers_Description": [
-		"",
+		"If set to true, adding a new user enables ActiveSync for the account",
 		"string"
 	],
 	"Server": [
@@ -20,7 +20,7 @@
 		"string"
 	],
 	"Server_Description": [
-		"",
+		"ActiveServer installation URL",
 		"string"
 	],
 	"LinkToManual": [
@@ -28,7 +28,7 @@
 		"string"
 	],
 	"LinkToManual_Description": [
-		"",
+		"URL of documentation for configuring ActiveSync by users",
 		"string"
 	]
 }
